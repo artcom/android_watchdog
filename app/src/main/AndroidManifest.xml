@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
           package="com.artcom.watchdog">
 
     <application android:allowBackup="true"
@@ -6,6 +7,18 @@
                  android:icon="@drawable/ic_launcher"
                  android:theme="@style/AppTheme">
 
+        <activity android:name=".MainActivity">
+            <intent-filter>
+               <category android:name="android.intent.category.LAUNCHER"/>
+               <action android:name="android.intent.action.MAIN"/>
+            </intent-filter>
+        </activity>
+
+        <receiver android:name=".RebootSignalReceiver">
+            <intent-filter>
+                <action android:name="com.artcom.watchdog.reboot"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
