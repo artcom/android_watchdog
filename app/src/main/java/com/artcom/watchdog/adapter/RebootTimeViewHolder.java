@@ -1,7 +1,6 @@
 package com.artcom.watchdog.adapter;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
@@ -19,7 +18,6 @@ class RebootTimeViewHolder implements CompoundButton.OnCheckedChangeListener {
     private TextView mTimeLeftText;
     private Switch mIsActiveSwitch;
     private Context mContext;
-    @Nullable
     private RebootTime mRebootTime;
 
 
@@ -50,7 +48,5 @@ class RebootTimeViewHolder implements CompoundButton.OnCheckedChangeListener {
             mRebootTime.saveToPreferences(mContext);
         }
     }
-
-
 
 }

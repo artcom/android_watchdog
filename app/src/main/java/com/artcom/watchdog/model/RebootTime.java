@@ -66,11 +66,11 @@ public class RebootTime {
         editor.commit();
     }
 
-    public RebootTime loadFromPreferences(Context context, int id) {
+    public static RebootTime loadFromPreferences(Context context, String id) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        long rebootTime = sharedPreferences.getLong(Integer.toString(mId) + REBOOT_TIME, -1);
-        boolean isActive = sharedPreferences.getBoolean(Integer.toString(mId) + REBOOT_ACTIVE, false);
-        return new RebootTime(id, rebootTime, isActive);
+        long rebootTime = sharedPreferences.getLong(id + REBOOT_TIME, -1);
+        boolean isActive = sharedPreferences.getBoolean(id + REBOOT_ACTIVE, false);
+        return new RebootTime(Integer.parseInt(id), rebootTime, isActive);
     }
 
 }

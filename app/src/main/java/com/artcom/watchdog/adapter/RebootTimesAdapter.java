@@ -15,16 +15,20 @@ public class RebootTimesAdapter extends BaseAdapter {
 
     private static final String LOG_TAG = RebootTimesAdapter.class.getSimpleName();
 
-    private List<RebootTime> mItems = new ArrayList<>();
+    private List<RebootTime> mRebootTimeList = new ArrayList<>();
+
+    public RebootTimesAdapter(List<RebootTime> rebootTimes) {
+        mRebootTimeList = rebootTimes;
+    }
 
     @Override
     public int getCount() {
-        return mItems.size();
+        return mRebootTimeList.size();
     }
 
     @Override
     public RebootTime getItem(int position) {
-        return mItems.get(position);
+        return mRebootTimeList.get(position);
     }
 
     @Override
@@ -43,8 +47,12 @@ public class RebootTimesAdapter extends BaseAdapter {
             viewHolder = (RebootTimeViewHolder) convertView.getTag();
         }
 
-        viewHolder.fillContent(mItems.get(position));
+        viewHolder.fillContent(mRebootTimeList.get(position));
         return convertView;
     }
 
+    public void add(RebootTime rebootTime) {
+        mRebootTimeList.add(rebootTime);
+        notifyDataSetChanged();
+    }
 }
