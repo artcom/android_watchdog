@@ -7,11 +7,12 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TimePicker;
 
@@ -25,7 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class RebootTimesFragment extends Fragment implements View.OnClickListener, TimePickerDialog.OnTimeSetListener {
+public class RebootTimesFragment extends Fragment implements TimePickerDialog.OnTimeSetListener {
 
     private static final String LOG_TAG = RebootTimesFragment.class.getSimpleName();
     private ListView mListView;
@@ -38,9 +39,24 @@ public class RebootTimesFragment extends Fragment implements View.OnClickListene
         mAdapter = new RebootTimesAdapter(loadAllRebootTimes());
         mListView.setAdapter(mAdapter);
         registerForContextMenu(mListView);
-        Button addButton = (Button) view.findViewById(R.id.btn_add_reboot_time);
-        addButton.setOnClickListener(this);
+        setHasOptionsMenu(true);
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.actionbar, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.mi_add) {
+            TimePickerDialog dialog = new TimePickerDialog(getActivity(), this, 0, 0, true);
+            dialog.show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -71,12 +87,6 @@ public class RebootTimesFragment extends Fragment implements View.OnClickListene
         } else {
             super.onCreateContextMenu(menu, v, menuInfo);
         }
-    }
-
-    @Override
-    public void onClick(View view) {
-        TimePickerDialog dialog = new TimePickerDialog(getActivity(), this, 0, 0, true);
-        dialog.show();
     }
 
     @Override
