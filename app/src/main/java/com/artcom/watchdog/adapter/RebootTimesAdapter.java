@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.artcom.watchdog.R;
+import com.artcom.watchdog.model.RebootManager;
 import com.artcom.watchdog.model.RebootTime;
 
 import java.util.ArrayList;
@@ -14,11 +15,13 @@ import java.util.List;
 public class RebootTimesAdapter extends BaseAdapter {
 
     private static final String LOG_TAG = RebootTimesAdapter.class.getSimpleName();
+    private final RebootManager mRebootManager;
 
     private List<RebootTime> mRebootTimeList = new ArrayList<>();
 
-    public RebootTimesAdapter(List<RebootTime> rebootTimes) {
-        mRebootTimeList = rebootTimes;
+    public RebootTimesAdapter(RebootManager rebootManager) {
+        mRebootManager = rebootManager;
+        mRebootTimeList = rebootManager.loadAllRebootTimes();
     }
 
     @Override

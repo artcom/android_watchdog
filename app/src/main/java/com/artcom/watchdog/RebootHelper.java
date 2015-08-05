@@ -40,7 +40,7 @@ public abstract class RebootHelper {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, rebootTime.getId(), rebootIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rebootTime.getRebootTime(), DAY_IN_MILLIS, pendingIntent);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rebootTime.getRebootTime(), 120 * 1000, pendingIntent);
     }
 
 }
