@@ -55,4 +55,9 @@ public class RebootTimesAdapter extends BaseAdapter {
         mRebootTimeList.add(rebootTime);
         notifyDataSetChanged();
     }
+
+    public void remove(RebootTime rebootTime) {
+        mRebootTimeList.remove(rebootTime);
+        notifyDataSetChanged();
+    }
 }

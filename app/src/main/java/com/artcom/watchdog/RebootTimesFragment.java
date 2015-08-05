@@ -5,9 +5,12 @@ import android.app.TimePickerDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TimePicker;
@@ -34,9 +37,40 @@ public class RebootTimesFragment extends Fragment implements View.OnClickListene
         mListView = (ListView) view.findViewById(R.id.lv_reboot_times);
         mAdapter = new RebootTimesAdapter(loadAllRebootTimes());
         mListView.setAdapter(mAdapter);
+        registerForContextMenu(mListView);
         Button addButton = (Button) view.findViewById(R.id.btn_add_reboot_time);
         addButton.setOnClickListener(this);
         return view;
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case 1:
+                AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+                RebootTime rebootTime = mAdapter.getItem(info.position);
+                RebootHelper.deactivateReboot(getActivity(), rebootTime);
+                mAdapter.remove(rebootTime);
+                rebootTime.delete(getActivity());
+                break;
+            case 2:
+                break;
+            default:
+                return super.onContextItemSelected(item);
+        }
+        return true;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        if(v.getId() == R.id.lv_reboot_times) {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+            menu.setHeaderTitle("Options");
+//            menu.add(0, 2, 0, "edit");
+            menu.add(0, 1, 1, "delete");
+        } else {
+            super.onCreateContextMenu(menu, v, menuInfo);
+        }
     }
 
     @Override
@@ -54,17 +88,7 @@ public class RebootTimesFragment extends Fragment implements View.OnClickListene
         RebootTime rebootTime = new RebootTime(getNextId(), calendar.getTimeInMillis(), true);
         RebootHelper.activateReboot(getActivity(), rebootTime);
         rebootTime.saveToPreferences(getActivity());
-        saveIdToPreferences(rebootTime.getId());
         mAdapter.add(rebootTime);
-    }
-
-    private void saveIdToPreferences(int id) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        Set<String> idSet = preferences.getStringSet("ids", new HashSet<String>());
-        idSet.add(Integer.toString(id));
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putStringSet("ids", idSet);
-        editor.commit();
     }
 
     private List<RebootTime> loadAllRebootTimes() {

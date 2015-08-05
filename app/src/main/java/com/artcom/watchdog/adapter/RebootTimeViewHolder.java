@@ -12,7 +12,7 @@ import com.artcom.watchdog.model.RebootTime;
 
 class RebootTimeViewHolder implements CompoundButton.OnCheckedChangeListener {
 
-    private static final int DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
+    private static final String LOG_TAG = RebootTimeViewHolder.class.getSimpleName();
 
     private TextView mTimeText;
     private TextView mTimeLeftText;
@@ -29,7 +29,7 @@ class RebootTimeViewHolder implements CompoundButton.OnCheckedChangeListener {
         mContext = view.getContext();
     }
 
-    public void fillContent(RebootTime rebootTime) {
+    void fillContent(RebootTime rebootTime) {
         mRebootTime = rebootTime;
         mTimeText.setText(mRebootTime.getTimeString());
         mTimeLeftText.setText(mRebootTime.getTimeLeftString());
@@ -39,13 +39,16 @@ class RebootTimeViewHolder implements CompoundButton.OnCheckedChangeListener {
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean isRebootActive) {
         if(mRebootTime != null) {
-            if(isRebootActive) {
+            if(isRebootActive && !mRebootTime.isActive()) {
                 RebootHelper.activateReboot(mContext, mRebootTime);
-            } else {
-                RebootHelper.deactivateReboot(mContext, mRebootTime);
+                mRebootTime.setActive(isRebootActive);
+                mRebootTime.saveToPreferences(mContext);
             }
-            mRebootTime.setActive(isRebootActive);
-            mRebootTime.saveToPreferences(mContext);
+            if(!isRebootActive && mRebootTime.isActive()) {
+                RebootHelper.deactivateReboot(mContext, mRebootTime);
+                mRebootTime.setActive(isRebootActive);
+                mRebootTime.saveToPreferences(mContext);
+            }
         }
     }
 

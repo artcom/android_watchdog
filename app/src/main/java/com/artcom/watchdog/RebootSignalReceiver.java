@@ -12,7 +12,7 @@ public class RebootSignalReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(LOG_TAG, "now I would perform a reboot :D");
-//        RebootHelper.reboot();
+        RebootHelper.reboot();
     }
 
 }

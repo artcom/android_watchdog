@@ -27,12 +27,14 @@
             android:id="@+id/tv_item_time_left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="in 21h, 42m"/>
+            android:text="in 21h, 42m"
+            android:visibility="gone"/>
     </LinearLayout>
 
     <Switch
         android:id="@+id/sw_item_onoff"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:focusable="false"/>
 
 </LinearLayout>
