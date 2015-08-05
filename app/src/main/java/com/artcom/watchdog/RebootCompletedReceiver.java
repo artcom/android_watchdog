@@ -18,7 +18,9 @@ public class RebootCompletedReceiver extends BroadcastReceiver {
         RebootManager rebootManager = new RebootManager(context);
         List<RebootTime> rebootTimes = rebootManager.loadAllRebootTimes();
         for(RebootTime rebootTime : rebootTimes) {
-            RebootHelper.activateReboot(context, rebootTime);
+            if(rebootTime.isActive()) {
+                RebootHelper.activateReboot(context, rebootTime);
+            }
         }
     }
 }

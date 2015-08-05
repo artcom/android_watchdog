@@ -4,34 +4,33 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 public class RebootTime {
 
     private static final String LOG_TAG = RebootTime.class.getSimpleName();
-    private static final String REBOOT_TIME = "reboot_time";
+    private static final String REBOOT_TIME_HOUR = "reboot_time_hour";
     private static final String REBOOT_ACTIVE = "reboot_active";
+    private static final String REBOOT_IDS = "ids";
+    private static final String REBOOT_TIME_MINUTE = "reboot_time_minute";
 
     private int mId;
-    private long mRebootTime;
+    private int mRebootHour;
+    private int mRebootMinute;
+
     private boolean isActive;
 
-    public RebootTime(int id, long rebootTime, boolean isActive) {
+    public RebootTime(int id, int rebootHour, int rebootMinute, boolean isActive) {
         mId = id;
-        mRebootTime = rebootTime;
+        mRebootHour = rebootHour;
+        mRebootMinute = rebootMinute;
         this.isActive = isActive;
     }
 
     public int getId() {
         return mId;
-    }
-
-    public long getRebootTime() {
-        return mRebootTime;
     }
 
     public boolean isActive() {
@@ -42,56 +41,74 @@ public class RebootTime {
         mId = id;
     }
 
-    public void setRebootTime(long rebootTime) {
-        mRebootTime = rebootTime;
-    }
-
     public void setActive(boolean isActive) {
         this.isActive = isActive;
     }
 
     public String getTimeString() {
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-        return sdf.format(new Date(mRebootTime));
+        return Integer.toString(mRebootHour) + ":" + Integer.toString(mRebootMinute);
     }
 
     public String getTimeLeftString() {
-        long timeLeft = mRebootTime - System.currentTimeMillis();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timeLeft);
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
+//        long timeLeft = mRebootTime - System.currentTimeMillis();
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.setTimeInMillis(timeLeft);
+//        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+//        int minute = calendar.get(Calendar.MINUTE);
 //        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.GERMANY);
 //        return "reboot in " + sdf.format(new Date(timeLeft));
-        String timeLeftText = "reboot in " + Integer.toString(hour) + "h and " + Integer.toString(minute) + "m";
+//        String timeLeftText = "reboot in " + Integer.toString(hour) + "h and " + Integer.toString(minute) + "m";
         return "";
     }
 
+
+    public long getNextRebootTime() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, mRebootHour);
+        calendar.set(Calendar.MINUTE, mRebootMinute);
+        calendar.set(Calendar.SECOND, 0);
+
+        long rebootTimeInMillis = calendar.getTimeInMillis();
+        if (rebootTimeInMillis < System.currentTimeMillis()) {
+            int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH) + 1;
+            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        }
+        return calendar.getTimeInMillis();
+    }
+
+    /**
+     *
+     * TODO: Move this code to RebootManager
+     *
+     */
     public void saveToPreferences(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        Set<String> idSet = sharedPreferences.getStringSet("ids", new HashSet<String>());
+        Set<String> idSet = sharedPreferences.getStringSet(REBOOT_IDS, new HashSet<String>());
         idSet.add(Integer.toString(mId));
-        editor.putStringSet("ids", idSet);
-        editor.putLong(Integer.toString(mId) + REBOOT_TIME, mRebootTime);
+        editor.putStringSet(REBOOT_IDS, idSet);
+        editor.putInt(Integer.toString(mId) + REBOOT_TIME_HOUR, mRebootHour);
+        editor.putInt(Integer.toString(mId) + REBOOT_TIME_MINUTE, mRebootMinute);
         editor.putBoolean(Integer.toString(mId) + REBOOT_ACTIVE, isActive);
         editor.commit();
     }
 
     public static RebootTime loadFromPreferences(Context context, String id) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        long rebootTime = sharedPreferences.getLong(id + REBOOT_TIME, -1);
+        int rebootTimeHour = sharedPreferences.getInt(id + REBOOT_TIME_HOUR, -1);
+        int rebootTimeMinute = sharedPreferences.getInt(id + REBOOT_TIME_MINUTE, -1);
         boolean isActive = sharedPreferences.getBoolean(id + REBOOT_ACTIVE, false);
-        return new RebootTime(Integer.parseInt(id), rebootTime, isActive);
+        return new RebootTime(Integer.parseInt(id), rebootTimeHour, rebootTimeMinute, isActive);
     }
 
     public void delete(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        Set<String> idSet = sharedPreferences.getStringSet("ids", new HashSet<String>());
+        Set<String> idSet = sharedPreferences.getStringSet(REBOOT_IDS, new HashSet<String>());
         idSet.remove(Integer.toString(mId));
-        editor.putStringSet("ids", idSet);
-        editor.remove(Integer.toString(mId) + REBOOT_TIME);
+        editor.putStringSet(REBOOT_IDS, idSet);
+        editor.remove(Integer.toString(mId) + REBOOT_TIME_HOUR);
+        editor.remove(Integer.toString(mId) + REBOOT_TIME_MINUTE);
         editor.remove(Integer.toString(mId) + REBOOT_ACTIVE);
         editor.commit();
     }

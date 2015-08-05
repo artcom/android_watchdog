@@ -30,7 +30,7 @@ public class RebootTimesFragment extends Fragment implements TimePickerDialog.On
         mRebootManager = new RebootManager(getActivity());
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.reboottimes_fragment, null);
         mListView = (ListView) view.findViewById(R.id.lv_reboot_times);
-        mAdapter = new RebootTimesAdapter(mRebootManager.loadAllRebootTimes());
+        mAdapter = new RebootTimesAdapter(mRebootManager);
         mListView.setAdapter(mAdapter);
         registerForContextMenu(mListView);
         setHasOptionsMenu(true);

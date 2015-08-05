@@ -4,11 +4,14 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.artcom.watchdog.model.RebootTime;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public abstract class RebootHelper {
 
@@ -36,11 +39,14 @@ public abstract class RebootHelper {
     }
 
     public static void activateReboot(Context context, RebootTime rebootTime) {
+        Date date = new Date(rebootTime.getNextRebootTime());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM HH:mm");
+        Log.d(LOG_TAG, "activate Reboot at " + sdf.format(date));
         Intent rebootIntent = new Intent(INTENT_ACTION_REBOOT);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, rebootTime.getId(), rebootIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rebootTime.getRebootTime(), 120 * 1000, pendingIntent);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, rebootTime.getNextRebootTime(), pendingIntent);
     }
 
 }
