@@ -1,6 +1,12 @@
 apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.application'
 
+def getVersionCode = { ->
+    def code = System.getenv('BUILD_NUMBER') ? System.getenv('BUILD_NUMBER').toInteger() : -1
+    println "VersionCode is set to $code"
+    return code
+}
+
 android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
@@ -9,7 +15,7 @@ android {
         applicationId "com.artcom.watchdog"
         minSdkVersion 17
         targetSdkVersion 22
-        versionCode 1
+        versionCode getVersionCode()
         versionName "1.0"
     }
     buildTypes {
